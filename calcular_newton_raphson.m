@@ -13,16 +13,15 @@ function resultados = calcular_newton_raphson(f_str, x0, tol, maxIter)
 %     resultados – matriz Nx5 con columnas: [xi, f(xi), f'(xi), f''(xi), xi+1]
 %                  Compatible con generar_tabla(tabla, resultados)
 
-    % Convertir el string de la función a expresión simbólica
-    syms x
-  f_sym = str2sym(f_str);
-    df_sym = diff(f_sym, x);       % Primera derivada
-    d2f_sym = diff(df_sym, x);     % Segunda derivada
+    % Convertir el string a una función anónima (vectorizada)
+    f_str_vec = vectorize(f_str);
+    f = str2func(['@(x) ' f_str_vec]);
 
-    % Convertir a funciones numéricas para evaluación rápida
-    f   = matlabFunction(f_sym,   'Vars', x);
-    df  = matlabFunction(df_sym,  'Vars', x);
-    d2f = matlabFunction(d2f_sym, 'Vars', x);
+    % Definir aproximaciones numéricas para la primera y segunda derivada
+    % Esto evita requerir el Symbolic Math Toolbox (syms)
+    h = 1e-6;
+    df  = @(x) (f(x + h) - f(x - h)) / (2 * h);
+    d2f = @(x) (f(x + h) - 2 * f(x) + f(x - h)) / (h^2);
 
     % Preasignar matriz de resultados
     resultados = zeros(maxIter, 5);

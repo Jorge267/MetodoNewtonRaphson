@@ -10,6 +10,11 @@ function [esValido, mensaje, x0, tol, maxIter] = validar_entradas(strFuncion, st
         mensaje = 'Error: Todos los campos son obligatorios y no pueden estar vacíos.';
         return;
     end
+    
+    % Asegurar que las entradas numéricas sean tratadas correctamente si vienen como números (desde App Designer)
+    if isnumeric(strX0), strX0 = num2str(strX0); end
+    if isnumeric(strTol), strTol = num2str(strTol); end
+    if isnumeric(strMaxIter), strMaxIter = num2str(strMaxIter); end
 
     % 2. VALIDACIÓN Y PREPARACIÓN DE LA FUNCIÓN
     try
